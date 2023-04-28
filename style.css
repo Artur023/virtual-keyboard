@@ -23,6 +23,7 @@
   border: 1px solid #000;
   border-radius: 10px;
   padding: 10px 0px 10px 0px;
+  background: #aae2f8;
 }
 
 .row {
@@ -41,9 +42,15 @@ text-align: center;
   margin: 1px 2px;
   padding: 15px;
   cursor: pointer;
+  background: #fff;
 }
 .key-space{
-  width: 28.5%;
+  width: 235px;
   padding: 10px;
   margin-bottom: -19.5px;
+}
+.active{
+  background: #08aff1;
+  transition: all;
+  transition-duration: 0.3s;
 }

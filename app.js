@@ -10,12 +10,6 @@ keyboard.classList.add("main__keyboard");
 textarea.setAttribute("rows", "10");
 body.prepend(wrapper);
 wrapper.append(textarea, keyboard);
-console.log(...dataKey);
-let row1 = dataKey[0];
-let row2 = dataKey[1];
-let row3 = dataKey[2];
-let row4 = dataKey[3];
-let row5 = dataKey[4];
 
 function getButton(row) {
   for (let i = 0; i < row.length; i++) {
@@ -24,17 +18,41 @@ function getButton(row) {
       div.classList.add("row");
       keyboard.append(div);
     }
-    let classSplit = row[i].class.split(' ')
-    console.log(classSplit)
+    let classSplit = row[i].class.split(" ");
     let divItem = document.createElement("div");
-    divItem.classList.add(`${classSplit[0]}`,`${classSplit[1]}`);
+    divItem.classList.add(`${classSplit[0]}`, `${classSplit[1]}`);
+    //добавление третьего класса к кнопкам
+    if (classSplit[2]) {
+      divItem.classList.add(`${classSplit[2]}`);
+    }
     div.append(divItem);
-    divItem.innerHTML = `${row[i].key.en}`
+    divItem.innerHTML = `${row[i].key.en}`;
   }
 }
-getButton(row1);
-getButton(row2);
-getButton(row3);
-getButton(row4);
-getButton(row5);
+for (const row of dataKey) {
+  getButton(row);
+}
+//коллекция всех кнопок
+let allButtons = document.querySelectorAll(".key");
+//Обработчики событий на клавиатуру
+document.addEventListener("keydown", handlerKeyDown);
 
+document.addEventListener("keyup", handlerKeyUp);
+
+function handlerKeyDown(event) {
+  for (const button of allButtons) {
+    if (button.classList.contains("active")) {
+      button.classList.remove("active");
+    }
+    if (button.classList.contains(`${event.code}`)) {
+      button.classList.add("active");
+    }
+  }
+}
+function handlerKeyUp(event) {
+  for (const button of allButtons) {
+    if (button.classList.contains("active")) {
+      button.classList.remove("active");
+    }
+  }
+}
