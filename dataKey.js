@@ -1,4 +1,4 @@
-const dataKey = [
+export const dataKey = [
   [
     // row 1
     {
@@ -11,7 +11,7 @@ const dataKey = [
         en: "±",
       },
       code: "Backquote",
-      class: "key Backquote",
+      class: "key key-backquote",
       caps: { ru: "Ё", en: "`" },
     },
     {
@@ -452,4 +452,3 @@ const dataKey = [
   ],
 ];
 
-export default dataKey;

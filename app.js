@@ -1,3 +1,4 @@
+import { dataKey } from "./dataKey.js";
 let body = document.body;
 let wrapper = document.createElement("main");
 let textarea = document.createElement("textarea");
@@ -9,19 +10,31 @@ keyboard.classList.add("main__keyboard");
 textarea.setAttribute("rows", "10");
 body.prepend(wrapper);
 wrapper.append(textarea, keyboard);
-let arrSimpleButton = [
-  
-];
-document.body.addEventListener("keypress", handler);
-function handler(event) {
-  arrSimpleButton.push(event.code);
-  console.log(event);
-}
-for (let i = 0; i < arrSimpleButton.length; i++) {
-  const element = arrSimpleButton[i];
+console.log(...dataKey);
+let row1 = dataKey[0];
+let row2 = dataKey[1];
+let row3 = dataKey[2];
+let row4 = dataKey[3];
+let row5 = dataKey[4];
 
-  let div = document.createElement('div')
-  div.classList.add('simple-button')
-  div.innerHTML = element
-  keyboard.append(div)
+function getButton(row) {
+  for (let i = 0; i < row.length; i++) {
+    if (i === 0) {
+      var div = document.createElement("div");
+      div.classList.add("row");
+      keyboard.append(div);
+    }
+    let classSplit = row[i].class.split(' ')
+    console.log(classSplit)
+    let divItem = document.createElement("div");
+    divItem.classList.add(`${classSplit[0]}`,`${classSplit[1]}`);
+    div.append(divItem);
+    divItem.innerHTML = `${row[i].key.en}`
+  }
 }
+getButton(row1);
+getButton(row2);
+getButton(row3);
+getButton(row4);
+getButton(row5);
+
