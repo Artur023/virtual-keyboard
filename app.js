@@ -36,16 +36,23 @@ for (const row of dataKey) {
 let allButtons = document.querySelectorAll(".key");
 //Обработчики событий на клавиатуру
 document.addEventListener("keydown", handlerKeyDown);
+keyboard.addEventListener("click", handlerKeyDown);
 
 document.addEventListener("keyup", handlerKeyUp);
+keyboard.addEventListener("click", handlerClick);
 
 function handlerKeyDown(event) {
   for (const button of allButtons) {
     if (button.classList.contains("active")) {
       button.classList.remove("active");
     }
-    if (button.classList.contains(`${event.code}`)) {
+    if (
+      button.classList.contains(`${event.code}`) ||
+      button.classList.contains(event.target.className.split(" ")[1])
+    ) {
       button.classList.add("active");
+      text(event.key || event.target.innerHTML);
+      console.log(event);
     }
   }
 }
@@ -54,5 +61,23 @@ function handlerKeyUp(event) {
     if (button.classList.contains("active")) {
       button.classList.remove("active");
     }
+  }
+}
+//функция для исчезания подсветки при клике
+function handlerClick(event) {
+  setTimeout(() => {
+    handlerKeyUp();
+  }, 150);
+}
+//функция добавления в в textarea
+function text(item) {
+  if (item === "Backspace") {
+    textarea.innerHTML = textarea.innerHTML.slice(
+      0,
+      textarea.innerHTML.length - 1
+    );
+    console.log(textarea.innerHTML);
+  } else {
+    textarea.append(item);
   }
 }
