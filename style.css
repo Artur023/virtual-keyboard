@@ -13,6 +13,7 @@
 .main__textarea {
   width: 100%;
   max-height: 300px;
+  font-size: 32px;
 }
 
 .main__keyboard {
