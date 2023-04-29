@@ -58,7 +58,7 @@ export const dataKey = [
     },
     {
       key: { ru: "7", en: "7" },
-      shift: { ru: ".", en: "&" },
+      shift: { ru: ".", en: "&amp;" },
       code: "Digit7",
       class: "key Digit7",
       caps: { ru: "7", en: "7" },

@@ -29,7 +29,7 @@ function getButton(row) {
     divItem.innerHTML = `${row[i].key.en}`;
   }
 }
-for (const row of dataKey) {
+for (let row of dataKey) {
   getButton(row);
 }
 //коллекция всех кнопок
@@ -51,8 +51,7 @@ function handlerKeyDown(event) {
       button.classList.contains(event.target.className.split(" ")[1])
     ) {
       button.classList.add("active");
-      text(event.key || event.target.innerHTML);
-      console.log(event);
+      text(event);
     }
   }
 }
@@ -62,6 +61,7 @@ function handlerKeyUp(event) {
       button.classList.remove("active");
     }
   }
+  forShiftUp(event);
 }
 //функция для исчезания подсветки при клике
 function handlerClick(event) {
@@ -71,13 +71,49 @@ function handlerClick(event) {
 }
 //функция добавления в в textarea
 function text(item) {
-  if (item === "Backspace") {
+  if (item.key === "Backspace" || item.target.innerHTML === "Backspace") {
     textarea.innerHTML = textarea.innerHTML.slice(
       0,
       textarea.innerHTML.length - 1
     );
-    console.log(textarea.innerHTML);
+  } else if (item.key === "Enter" || item.target.innerHTML === "Enter") {
+    textarea.append("\n");
+  } else if (item.key === "Shift" || item.target.innerHTML === "Shift") {
+    forShiftDown(item);
   } else {
-    textarea.append(item);
+    if (item.key) {
+      textarea.append(item.key);
+    } else {
+      textarea.append(item.target.innerHTML);
+    }
+  }
+}
+// console.log(allButtons[1]);
+
+function forShiftDown(event) {
+  for (const button of allButtons) {
+  }
+  for (const dataRow of dataKey) {
+    for (const dataButton of dataRow) {
+      for (const button of allButtons) {
+        if (dataButton.key.en === button.innerHTML) {
+          button.innerHTML = dataButton.shift.en;
+        }
+      }
+    }
+  }
+}
+function forShiftUp(event) {
+  console.log(event)
+  for (const button of allButtons) {
+  }
+  for (const dataRow of dataKey) {
+    for (const dataButton of dataRow) {
+      for (const button of allButtons) {
+        if (dataButton.shift.en === button.innerHTML) {
+          button.innerHTML = dataButton.key.en;
+        }
+      }
+    }
   }
 }
