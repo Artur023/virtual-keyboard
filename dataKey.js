@@ -188,12 +188,6 @@ export const dataKey = [
       code: "BracketRight",
       class: "key BracketRight",
       caps: { ru: "Ъ", en: "]" },
-      // },
-      // {
-      //   key: { ru: '\\', en: '\\' }, shift: { ru: '|', en: '|' }, code: 'Backslash', class: 'key key_backslash Backslash', caps: { ru: '\\', en: '\\'}
-      // },
-      // {
-      //   key: { ru: 'Del', en: 'Del' }, shift: { ru: 'Del', en: 'Del' }, code: 'Delete', class: 'key key_del Delete', noType: true,
     },
   ],
   [
@@ -278,14 +272,14 @@ export const dataKey = [
       shift: { ru: "Ё", en: "|" },
       code: "Backslash",
       class: "key Backslash",
-      caps: { ru: "Ё", en: "\\" }
+      caps: { ru: "Ё", en: "\\" },
     },
     {
       key: { ru: "Enter", en: "Enter" },
       shift: { ru: "Enter", en: "Enter" },
       code: "Enter",
       class: "key Enter",
-      noType: true
+      noType: true,
     },
   ],
   [
@@ -294,7 +288,7 @@ export const dataKey = [
       key: { ru: "Shift", en: "Shift" },
       shift: { ru: "Shift", en: "Shift" },
       code: "ShiftLeft",
-      class: "key ShiftLeft",
+      class: "key ShiftLeft key-shift",
       noType: true,
     },
     {
@@ -348,14 +342,14 @@ export const dataKey = [
     },
     {
       key: { ru: "б", en: "," },
-      shift: { ru: "Б", en: "<" },
+      shift: { ru: "Б", en: "&lt;" },
       code: "Comma",
       class: "key Comma",
       caps: { ru: "Б", en: "," },
     },
     {
       key: { ru: "ю", en: "." },
-      shift: { ru: "Ю", en: ">" },
+      shift: { ru: "Ю", en: "&gt;" },
       code: "Period",
       class: "key Period",
       caps: { ru: "Ю", en: "." },
@@ -377,7 +371,7 @@ export const dataKey = [
       key: { ru: "Shift", en: "Shift" },
       shift: { ru: "Shift", en: "Shift" },
       code: "ShiftRight",
-      class: "key ShiftRight",
+      class: "key ShiftRight key-shift",
       noType: true,
     },
   ],
@@ -417,7 +411,7 @@ export const dataKey = [
       code: "Space",
       class: "key Space key-space",
     },
-    { 
+    {
       key: { ru: "cmd", en: "cmd" },
       shift: { ru: "cmd", en: "cmd" },
       code: "MetaRight",
@@ -451,4 +445,3 @@ export const dataKey = [
     },
   ],
 ];
-

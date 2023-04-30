@@ -8,6 +8,8 @@ wrapper.classList.add("main");
 textarea.classList.add("main__textarea");
 keyboard.classList.add("main__keyboard");
 textarea.setAttribute("rows", "10");
+textarea.setAttribute("disabled", "");
+textarea.setAttribute("placeholder", "Введите текcт с виртуальной клавиатуры");
 body.prepend(wrapper);
 wrapper.append(textarea, keyboard);
 
@@ -55,6 +57,7 @@ function handlerKeyDown(event) {
     }
   }
 }
+
 function handlerKeyUp(event) {
   for (const button of allButtons) {
     if (button.classList.contains("active")) {
@@ -69,6 +72,7 @@ function handlerClick(event) {
     handlerKeyUp();
   }, 150);
 }
+
 //функция добавления в в textarea
 function text(item) {
   if (item.key === "Backspace" || item.target.innerHTML === "Backspace") {
@@ -79,7 +83,22 @@ function text(item) {
   } else if (item.key === "Enter" || item.target.innerHTML === "Enter") {
     textarea.append("\n");
   } else if (item.key === "Shift" || item.target.innerHTML === "Shift") {
+    item.preventDefault();
     forShiftDown(item);
+  } else if (item.key === "Alt" || item.target.innerHTML === "Alt") {
+    textarea.innerHTML = textarea.innerHTML;
+  } else if (item.key === "Meta" || item.target.innerHTML === "Meta") {
+    textarea.innerHTML = textarea.innerHTML;
+  } else if (item.key === "fn" || item.target.innerHTML === "fn") {
+    textarea.innerHTML = textarea.innerHTML;
+  } else if (item.key === "CapsLock" || item.target.innerHTML === "CapsLock") {
+    forShiftDown(item)
+  } else if (item.key === "Control" || item.target.innerHTML === "Control") {
+    item.preventDefault();
+    textarea.innerHTML = textarea.innerHTML;
+  } else if (item.key === "Tab" || item.target.innerHTML === "Tab") {
+    item.preventDefault();
+    textarea.append("  ");
   } else {
     if (item.key) {
       textarea.append(item.key);
@@ -88,11 +107,8 @@ function text(item) {
     }
   }
 }
-// console.log(allButtons[1]);
 
 function forShiftDown(event) {
-  for (const button of allButtons) {
-  }
   for (const dataRow of dataKey) {
     for (const dataButton of dataRow) {
       for (const button of allButtons) {
@@ -103,17 +119,24 @@ function forShiftDown(event) {
     }
   }
 }
+
 function forShiftUp(event) {
-  console.log(event)
-  for (const button of allButtons) {
-  }
-  for (const dataRow of dataKey) {
-    for (const dataButton of dataRow) {
-      for (const button of allButtons) {
-        if (dataButton.shift.en === button.innerHTML) {
-          button.innerHTML = dataButton.key.en;
+  if (event.key === "Shift" || event.key === "CapsLock") {
+    for (const dataRow of dataKey) {
+      for (const dataButton of dataRow) {
+        for (const button of allButtons) {
+          if (dataButton.shift.en === button.innerHTML) {
+            button.innerHTML = dataButton.key.en;
+          }
         }
       }
     }
+  }
+}
+// TODO проблеммы с удалением &,<,>из textarea
+let arrButtonShift = [];
+for (const button of allButtons) {
+  if (button.classList.contains("key-shift")) {
+    arrButtonShift.push(button);
   }
 }
