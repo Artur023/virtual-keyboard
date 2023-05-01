@@ -7,11 +7,18 @@ body.classList.add("body");
 wrapper.classList.add("main");
 textarea.classList.add("main__textarea");
 keyboard.classList.add("main__keyboard");
-textarea.setAttribute("rows", "10");
+textarea.setAttribute("rows", "3");
 textarea.setAttribute("disabled", "");
 textarea.setAttribute("placeholder", "Введите текcт с виртуальной клавиатуры");
 body.prepend(wrapper);
 wrapper.append(textarea, keyboard);
+
+//Добавил div на экран для описания клавишь отчистки
+let description = document.createElement("div");
+description.classList.add("description");
+body.prepend(description);
+description.innerHTML =
+  "<b>Virtual-keyboard</b> </br> Клавиатура создавалась в операционной среде <b>macOC</b>";
 
 function getButton(row) {
   for (let i = 0; i < row.length; i++) {
@@ -36,6 +43,7 @@ for (let row of dataKey) {
 }
 //коллекция всех кнопок
 let allButtons = document.querySelectorAll(".key");
+
 //Обработчики событий на клавиатуру
 document.addEventListener("keydown", handlerKeyDown);
 keyboard.addEventListener("click", handlerKeyDown);
@@ -46,6 +54,7 @@ keyboard.addEventListener("click", handlerClick);
 let flag = false;
 let caps = false;
 let meta = false;
+let lang = "en";
 
 function handlerKeyDown(event) {
   for (const button of allButtons) {
@@ -62,12 +71,6 @@ function handlerKeyDown(event) {
         flag = true;
       }
       changeLang(event);
-      if (event.target.innerHTML === "CapsLock" && caps === false) {
-        caps = true;
-      }
-      if (event.target.innerHTML === "CapsLock" && caps === true) {
-        caps = false;
-      }
     }
   }
 }
@@ -93,7 +96,6 @@ function handlerClick(event) {
 //функция добавления в в textarea
 function text(item) {
   if (item.key === "Backspace" || item.target.innerHTML === "Backspace") {
-    console.log(textarea.innerHTML.slice(-5));
     if (textarea.innerHTML.slice(-5) === "&amp;") {
       textarea.innerHTML = textarea.innerHTML.slice(
         0,
@@ -137,7 +139,7 @@ function text(item) {
   } else if (item.key === "fn" || item.target.innerHTML === "fn") {
     textarea.innerHTML = textarea.innerHTML;
   } else if (item.key === "CapsLock" || item.target.innerHTML === "CapsLock") {
-    forShiftDown(item);
+      forCapsDown(item);
   } else if (item.key === "Control" || item.target.innerHTML === "Ctrl") {
     item.preventDefault();
     textarea.innerHTML = textarea.innerHTML;
@@ -146,21 +148,24 @@ function text(item) {
     textarea.append("    ");
   } else {
     if (item.key === "ArrowLeft") {
+      item.preventDefault();
       textarea.append("◄");
       return;
     } else if (item.key === "ArrowRight") {
+      item.preventDefault();
       textarea.append("►");
       return;
     } else if (item.key === "ArrowUp") {
+      item.preventDefault();
       textarea.append("▲");
       return;
     } else if (item.key === "ArrowDown") {
+      item.preventDefault();
       textarea.append("▼");
       return;
     }
     if (item.key) {
-      // textarea.append(item.code);
-      inner(item.code);
+      inner(item);
     } else {
       if (item.target.innerHTML === " ") {
         textarea.append(" ");
@@ -170,12 +175,13 @@ function text(item) {
   }
 }
 // Функция для вставки именно текста с в клавы
-function inner(code) {
-  if (code === "Space") {
+function inner(item) {
+  if (item.code === "Space") {
+    item.preventDefault();
     textarea.append(" ");
   }
   for (const button of allButtons) {
-    if (button.classList[1] === code) {
+    if (button.classList[1] === item.code) {
       textarea.append(button.innerText);
     }
   }
@@ -227,14 +233,34 @@ function forShiftUp(event) {
     }
   }
 }
-// TODO проблеммы с удалением &,<,>из textarea
-
-// let arrButtonShift = [];
-// for (const button of allButtons) {
-//   if (button.classList.contains("key-shift")) {
-//     arrButtonShift.push(button);
-//   }
-// }
+function forCapsDown(event) {
+  for (const dataRow of dataKey) {
+    for (const dataButton of dataRow) {
+      for (const button of allButtons) {
+        //en
+        if (
+          dataButton.key.en === button.innerHTML &&
+          dataButton.code === button.classList[1]
+        ) {
+          if (dataButton.caps) {
+            button.innerHTML = dataButton.caps.en;
+          } else {
+            button.innerHTML = dataButton.shift.en;
+          }
+        } else if (
+          dataButton.key.ru === button.innerHTML &&
+          dataButton.code === button.classList[1]
+        ) {
+          if (dataButton.caps) {
+            button.innerHTML = dataButton.caps.ru;
+          } else {
+            button.innerHTML = dataButton.shift.ru;
+          }
+        }
+      }
+    }
+  }
+}
 
 let change = document.createElement("div");
 change.classList.add("change-lang");
@@ -258,21 +284,25 @@ function forChange(event) {
           dataButton.code === button.classList[1]
         ) {
           button.innerHTML = dataButton.key.ru;
+          lang = "ru";
         } else if (
           dataButton.key.ru === button.innerHTML &&
           dataButton.code === button.classList[1]
         ) {
           button.innerHTML = dataButton.key.en;
+          lang = "en";
         } else if (
           dataButton.shift.ru === button.innerHTML &&
           dataButton.code === button.classList[1]
         ) {
           button.innerHTML = dataButton.shift.en;
+          lang = "en";
         } else if (
           dataButton.shift.en === button.innerHTML &&
           dataButton.code === button.classList[1]
         ) {
           button.innerHTML = dataButton.shift.ru;
+          lang = "ru";
         }
       }
     }
