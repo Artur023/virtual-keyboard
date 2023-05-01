@@ -93,10 +93,26 @@ function handlerClick(event) {
 //функция добавления в в textarea
 function text(item) {
   if (item.key === "Backspace" || item.target.innerHTML === "Backspace") {
-    textarea.innerHTML = textarea.innerHTML.slice(
-      0,
-      textarea.innerHTML.length - 1
-    );
+    console.log(textarea.innerHTML.slice(-5));
+    if (textarea.innerHTML.slice(-5) === "&amp;") {
+      textarea.innerHTML = textarea.innerHTML.slice(
+        0,
+        textarea.innerHTML.length - 5
+      );
+    } else if (
+      textarea.innerHTML.slice(-4) === "&gt;" ||
+      textarea.innerHTML.slice(-4) === "&lt;"
+    ) {
+      textarea.innerHTML = textarea.innerHTML.slice(
+        0,
+        textarea.innerHTML.length - 4
+      );
+    } else {
+      textarea.innerHTML = textarea.innerHTML.slice(
+        0,
+        textarea.innerHTML.length - 1
+      );
+    }
     clear(item);
   } else if (item.key === "Enter" || item.target.innerHTML === "Enter") {
     textarea.append("\n");
@@ -262,11 +278,15 @@ function forChange(event) {
     }
   }
 }
+// функция отчистки текстария
 function clear(event) {
-  console.log(event);
-  console.log(meta);
   if (event.key === "Backspace" && meta === true) {
     textarea.innerText = "";
     meta = false;
   }
 }
+//Добавил div на экран для описания клавишь отчистки
+let divClear = document.createElement("div");
+divClear.classList.add("clear");
+change.after(divClear);
+divClear.innerHTML = "Для отчистки экрана используйте <b>cmd + Backspace</b>";
