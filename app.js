@@ -1,0 +1,322 @@
+import { dataKey } from "./dataKey.js";
+let body = document.body;
+let wrapper = document.createElement("main");
+let textarea = document.createElement("textarea");
+let keyboard = document.createElement("div");
+body.classList.add("body");
+wrapper.classList.add("main");
+textarea.classList.add("main__textarea");
+keyboard.classList.add("main__keyboard");
+textarea.setAttribute("rows", "3");
+textarea.setAttribute("disabled", "");
+textarea.setAttribute("placeholder", "Введите текcт с виртуальной клавиатуры");
+body.prepend(wrapper);
+wrapper.append(textarea, keyboard);
+
+//Добавил div на экран для описания клавишь отчистки
+let description = document.createElement("div");
+description.classList.add("description");
+body.prepend(description);
+description.innerHTML =
+  "<b>Virtual-keyboard</b> </br> Клавиатура создавалась в операционной среде <b>macOC</b>";
+
+function getButton(row) {
+  for (let i = 0; i < row.length; i++) {
+    if (i === 0) {
+      var div = document.createElement("div");
+      div.classList.add("row");
+      keyboard.append(div);
+    }
+    let classSplit = row[i].class.split(" ");
+    let divItem = document.createElement("div");
+    divItem.classList.add(`${classSplit[0]}`, `${classSplit[1]}`);
+    //добавление третьего класса к кнопкам
+    if (classSplit[2]) {
+      divItem.classList.add(`${classSplit[2]}`);
+    }
+    div.append(divItem);
+    divItem.innerHTML = `${row[i].key.en}`;
+  }
+}
+for (let row of dataKey) {
+  getButton(row);
+}
+//коллекция всех кнопок
+let allButtons = document.querySelectorAll(".key");
+
+//Обработчики событий на клавиатуру
+document.addEventListener("keydown", handlerKeyDown);
+keyboard.addEventListener("click", handlerKeyDown);
+
+document.addEventListener("keyup", handlerKeyUp);
+keyboard.addEventListener("click", handlerClick);
+
+let flag = false;
+let caps = false;
+let meta = false;
+let lang = "en";
+
+function handlerKeyDown(event) {
+  for (const button of allButtons) {
+    if (button.classList.contains("active")) {
+      button.classList.remove("active");
+    }
+    if (
+      button.classList.contains(`${event.code}`) ||
+      button.classList.contains(event.target.className.split(" ")[1])
+    ) {
+      button.classList.add("active");
+      text(event);
+      if (event.key === "Alt") {
+        flag = true;
+      }
+      changeLang(event);
+    }
+  }
+}
+
+function handlerKeyUp(event) {
+  for (const button of allButtons) {
+    if (button.classList.contains("active")) {
+      button.classList.remove("active");
+    }
+  }
+  forShiftUp(event);
+  flag = false;
+}
+//функция для исчезания подсветки при клике
+function handlerClick(event) {
+  if (event.target.innerHTML !== "CapsLock") {
+    setTimeout(() => {
+      handlerKeyUp();
+    }, 150);
+  }
+}
+
+//функция добавления в в textarea
+function text(item) {
+  if (item.key === "Backspace" || item.target.innerHTML === "Backspace") {
+    if (textarea.innerHTML.slice(-5) === "&amp;") {
+      textarea.innerHTML = textarea.innerHTML.slice(
+        0,
+        textarea.innerHTML.length - 5
+      );
+    } else if (
+      textarea.innerHTML.slice(-4) === "&gt;" ||
+      textarea.innerHTML.slice(-4) === "&lt;"
+    ) {
+      textarea.innerHTML = textarea.innerHTML.slice(
+        0,
+        textarea.innerHTML.length - 4
+      );
+    } else {
+      textarea.innerHTML = textarea.innerHTML.slice(
+        0,
+        textarea.innerHTML.length - 1
+      );
+    }
+    clear(item);
+  } else if (item.key === "Enter" || item.target.innerHTML === "Enter") {
+    textarea.append("\n");
+  } else if (item.key === "Shift" || item.target.innerHTML === "Shift") {
+    item.preventDefault();
+    forShiftDown(item);
+    if (item.target.innerHTML === "Shift") {
+      setTimeout(() => {
+        forShiftUp(item);
+      }, 100);
+    }
+  } else if (item.key === "Alt" || item.target.innerHTML === "Alt") {
+    textarea.innerHTML = textarea.innerHTML;
+  } else if (
+    item.key === "Meta" ||
+    item.target.innerHTML === "Meta" ||
+    item.key === "cmd" ||
+    item.target.innerHTML === "cmd"
+  ) {
+    textarea.innerHTML = textarea.innerHTML;
+    meta = true;
+  } else if (item.key === "fn" || item.target.innerHTML === "fn") {
+    textarea.innerHTML = textarea.innerHTML;
+  } else if (item.key === "CapsLock" || item.target.innerHTML === "CapsLock") {
+      forCapsDown(item);
+  } else if (item.key === "Control" || item.target.innerHTML === "Ctrl") {
+    item.preventDefault();
+    textarea.innerHTML = textarea.innerHTML;
+  } else if (item.key === "Tab" || item.target.innerHTML === "Tab") {
+    item.preventDefault();
+    textarea.append("    ");
+  } else {
+    if (item.key === "ArrowLeft") {
+      item.preventDefault();
+      textarea.append("◄");
+      return;
+    } else if (item.key === "ArrowRight") {
+      item.preventDefault();
+      textarea.append("►");
+      return;
+    } else if (item.key === "ArrowUp") {
+      item.preventDefault();
+      textarea.append("▲");
+      return;
+    } else if (item.key === "ArrowDown") {
+      item.preventDefault();
+      textarea.append("▼");
+      return;
+    }
+    if (item.key) {
+      inner(item);
+    } else {
+      if (item.target.innerHTML === " ") {
+        textarea.append(" ");
+      }
+      textarea.append(item.target.innerText);
+    }
+  }
+}
+// Функция для вставки именно текста с в клавы
+function inner(item) {
+  if (item.code === "Space") {
+    item.preventDefault();
+    textarea.append(" ");
+  }
+  for (const button of allButtons) {
+    if (button.classList[1] === item.code) {
+      textarea.append(button.innerText);
+    }
+  }
+}
+
+function forShiftDown(event) {
+  for (const dataRow of dataKey) {
+    for (const dataButton of dataRow) {
+      for (const button of allButtons) {
+        if (
+          dataButton.key.en === button.innerHTML &&
+          dataButton.code === button.classList[1]
+        ) {
+          button.innerHTML = dataButton.shift.en;
+        } else if (
+          dataButton.key.ru === button.innerHTML &&
+          dataButton.code === button.classList[1]
+        ) {
+          button.innerHTML = dataButton.shift.ru;
+        }
+      }
+    }
+  }
+}
+
+function forShiftUp(event) {
+  if (!event) {
+  } else if (
+    (event !== "undefined" && event.key === "Shift") ||
+    (event !== "undefined" && event.key === "CapsLock") ||
+    event.target.innerHTML === "Shift"
+  ) {
+    for (const dataRow of dataKey) {
+      for (const dataButton of dataRow) {
+        for (const button of allButtons) {
+          if (
+            dataButton.shift.en === button.innerHTML &&
+            dataButton.code === button.classList[1]
+          ) {
+            button.innerHTML = dataButton.key.en;
+          } else if (
+            dataButton.shift.ru === button.innerHTML &&
+            dataButton.code === button.classList[1]
+          ) {
+            button.innerHTML = dataButton.key.ru;
+          }
+        }
+      }
+    }
+  }
+}
+function forCapsDown(event) {
+  for (const dataRow of dataKey) {
+    for (const dataButton of dataRow) {
+      for (const button of allButtons) {
+        //en
+        if (
+          dataButton.key.en === button.innerHTML &&
+          dataButton.code === button.classList[1]
+        ) {
+          if (dataButton.caps) {
+            button.innerHTML = dataButton.caps.en;
+          } else {
+            button.innerHTML = dataButton.shift.en;
+          }
+        } else if (
+          dataButton.key.ru === button.innerHTML &&
+          dataButton.code === button.classList[1]
+        ) {
+          if (dataButton.caps) {
+            button.innerHTML = dataButton.caps.ru;
+          } else {
+            button.innerHTML = dataButton.shift.ru;
+          }
+        }
+      }
+    }
+  }
+}
+
+let change = document.createElement("div");
+change.classList.add("change-lang");
+keyboard.after(change);
+change.innerHTML =
+  "Для смены языка используйте комбинацию кнопок <b>Alt + cmd</b>";
+
+function changeLang(event) {
+  if (event.key === "Meta" && flag === true) {
+    forChange(event);
+    meta = false;
+  }
+}
+
+function forChange(event) {
+  for (const dataRow of dataKey) {
+    for (const dataButton of dataRow) {
+      for (const button of allButtons) {
+        if (
+          dataButton.key.en === button.innerHTML &&
+          dataButton.code === button.classList[1]
+        ) {
+          button.innerHTML = dataButton.key.ru;
+          lang = "ru";
+        } else if (
+          dataButton.key.ru === button.innerHTML &&
+          dataButton.code === button.classList[1]
+        ) {
+          button.innerHTML = dataButton.key.en;
+          lang = "en";
+        } else if (
+          dataButton.shift.ru === button.innerHTML &&
+          dataButton.code === button.classList[1]
+        ) {
+          button.innerHTML = dataButton.shift.en;
+          lang = "en";
+        } else if (
+          dataButton.shift.en === button.innerHTML &&
+          dataButton.code === button.classList[1]
+        ) {
+          button.innerHTML = dataButton.shift.ru;
+          lang = "ru";
+        }
+      }
+    }
+  }
+}
+// функция отчистки текстария
+function clear(event) {
+  if (event.key === "Backspace" && meta === true) {
+    textarea.innerText = "";
+    meta = false;
+  }
+}
+//Добавил div на экран для описания клавишь отчистки
+let divClear = document.createElement("div");
+divClear.classList.add("clear");
+change.after(divClear);
+divClear.innerHTML = "Для отчистки экрана используйте <b>cmd + Backspace</b>";
